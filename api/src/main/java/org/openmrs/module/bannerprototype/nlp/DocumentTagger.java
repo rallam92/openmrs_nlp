@@ -139,7 +139,6 @@ public class DocumentTagger implements Serializable {
 			prevPeriod = nextPeriod;
 			nextPeriod = document.indexOf('.', prevPeriod + 1);
 		}
-		
 		return sofaTexts;
 	}
 }

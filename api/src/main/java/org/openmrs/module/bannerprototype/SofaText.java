@@ -13,6 +13,8 @@ import org.openmrs.Concept;
 import org.openmrs.Encounter;
 
 import banner.tagging.Mention;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class holds sentence level annotations contained in the SofaDocument
@@ -20,6 +22,8 @@ import banner.tagging.Mention;
  * @author ryaneshleman
  */
 public class SofaText extends BaseOpenmrsObject implements Serializable, Comparable {
+	
+	private static final Log log = LogFactory.getLog(SofaText.class);
 	
 	private int sofaTextId;
 	
@@ -62,7 +66,7 @@ public class SofaText extends BaseOpenmrsObject implements Serializable, Compara
 	 * @param concepts
 	 */
 	public void addMentionAndConcepts(Mention m, List<Concept> concepts) {
-		//System.out.println("Mention Text: " + m.getText());
+		//log.info("Mention Text: " + m.getText());
 		ArrayList<SofaTextMention> toRemove = new ArrayList<SofaTextMention>();
 		
 		//check all SofaTextMentions
@@ -76,17 +80,15 @@ public class SofaText extends BaseOpenmrsObject implements Serializable, Compara
 			
 				if (stm.getMentionEnd() - stm.getMentionStart() < m.getEnd() - m.getStart())// mention is larger
 				{
-					System.out.println("1");
+					log.info("1");
 					concepts.addAll(stm.getConcepts());
 					toRemove.add(stm);
 				} else {
-					System.out.println("2");
+					log.info("2");
 					stm.addConcepts(concepts);
 					return;
 				}
-				
 			}
-			
 		}
 		// remove mentions from remove list
 		sofaTextMention.removeAll(toRemove);
@@ -112,6 +114,7 @@ public class SofaText extends BaseOpenmrsObject implements Serializable, Compara
 	 * SofaText, it will not be added if the mention subsumes or is subsumed by a current mention
 	 * 
 	 * @param m
+	 * @return
 	 */
 	public boolean addBannerMention(Mention m) {
 		for (SofaTextMention stm : sofaTextMention) {
@@ -249,11 +252,11 @@ public class SofaText extends BaseOpenmrsObject implements Serializable, Compara
 	 * @return
 	 */
 	public String getAnnotatedHTML() {
-		String html = new String(text);
+		String html = text;
 		String tagged;
 		for (SofaTextMention m : sofaTextMention) {
 			tagged = wrapInMentionTypeTag(m.getMentionText(), m.getMentionType());
-			//System.out.println(tagged);
+			//log.info(tagged);
 			
 			if (!m.getSofaTextMentionConcept().isEmpty())
 				tagged = wrapInConceptTag(tagged, m);
@@ -280,6 +283,8 @@ public class SofaText extends BaseOpenmrsObject implements Serializable, Compara
 	 * returns 0 if two SofaText objects start at the same index, otherwise returns the distance in
 	 * characters between the start index of the two SofaTexts being compared. + if current SofaText
 	 * is before text being compared
+	 * 
+	 * @param st
 	 */
 	@Override
 	public int compareTo(Object st) {
@@ -336,6 +341,8 @@ public class SofaText extends BaseOpenmrsObject implements Serializable, Compara
 	
 	/**
 	 * returns sofaTextId value, this method is required to implement BaseOpenmrsObject
+	 * 
+	 * @return
 	 */
 	@Override
 	public Integer getId() {

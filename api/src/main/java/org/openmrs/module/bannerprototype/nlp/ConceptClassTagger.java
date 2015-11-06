@@ -17,6 +17,8 @@ import banner.tagging.Mention;
 import banner.tagging.MentionType;
 import banner.tokenization.Tokenizer;
 import banner.tokenization.WhitespaceTokenizer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * this Class implements the Concept Dictionary class string matching
@@ -24,6 +26,8 @@ import banner.tokenization.WhitespaceTokenizer;
  * @author ryaneshleman
  */
 public class ConceptClassTagger implements Serializable {
+	
+	private static final Log log = LogFactory.getLog(ConceptClassTagger.class);
 	
 	private List<Concept> concepts;
 	
@@ -98,24 +102,19 @@ public class ConceptClassTagger implements Serializable {
 		
 		for (Concept c : concepts) {
 			for (String name : nameMap.get(c)) {
-				
 				name = name.toLowerCase();
 				
 				//if(lower_str.contains(" "+name))
 				if (lower_str.matches("(.*) " + name + "[\\s,.?!$](.*)")) {
-					
 					try {
 						Mention m = getMention(str, lower_str, name);
 						entities.add(new NamedEntity(m, c, name));
 					}
 					catch (Exception e) {
-						System.out.println("MENTION ERROR: " + str + " " + name);
+						log.error("MENTION ERROR: " + str + " " + name);
 					}
-					
 				}
-				
 			}
-			
 		}
 		
 		return entities;
@@ -139,8 +138,8 @@ public class ConceptClassTagger implements Serializable {
 			if (lower_str.charAt(i) == ' ' && lower_str.charAt(i - 1) != ' ')
 				token_index++;
 		
-		System.out.println(name);
-		System.out.println("TOKEN INDEX: " + token_index);
+		log.info(name);
+		log.info("TOKEN INDEX: " + token_index);
 		
 		Sentence s = new Sentence(str);
 		tokenizer.tokenize(s);

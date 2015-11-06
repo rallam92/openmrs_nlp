@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import banner.tokenization.Tokenizer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class NLPPatientNotesPortletController {
+	
+	private static final Log log = LogFactory.getLog(NLPPatientNotesPortletController.class);
 	
 	String loadModelFileName;
 	
@@ -43,7 +47,7 @@ public class NLPPatientNotesPortletController {
 		
 		Integer patientId = Integer.valueOf(request.getParameter("patientId"));
 		Patient patient = Context.getPatientService().getPatient(patientId);
-		System.out.println("loading AllSofaDocuments");
+		log.debug("loading AllSofaDocuments");
 		
 		if (reloadDocuments)
 			allSofaDocuments = Context.getService(NLPService.class).getSofaDocumentsByPatient(patient);
