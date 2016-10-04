@@ -279,44 +279,44 @@ public class CRFTagger implements Tagger, Serializable {
 	}
 	
 	public void describe(String fileName) throws IOException {
-		log.info("Number of default weights = " + forwardCRF.getDefaultWeights().length);
-		log.info("Number of states = " + forwardCRF.numStates());
+		log.debug("Number of default weights = " + forwardCRF.getDefaultWeights().length);
+		log.debug("Number of states = " + forwardCRF.numStates());
 		for (int i = 0; i < forwardCRF.numStates(); i++) {
 			State state = forwardCRF.getState(i);
-			log.info("State " + i + " is " + state.getName());
+			log.debug("State " + i + " is " + state.getName());
 		}
 		SparseVector[] weights = forwardCRF.getWeights();
-		log.info("Size of weights vector = " + weights.length);
+		log.debug("Size of weights vector = " + weights.length);
 		for (int i = 0; i < weights.length; i++)
-			log.info("Number of non-zero values for weight vector " + i + " is " + weights[i].numLocations());
+			log.debug("Number of non-zero values for weight vector " + i + " is " + weights[i].numLocations());
 		int size = forwardCRF.getInputAlphabet().size();
-		log.info("Size of input alphabet: " + size);
+		log.debug("Size of input alphabet: " + size);
 		PrintWriter output = new PrintWriter(fileName);
 		for (int i = 0; i < size; i++) {
 			String featureName = forwardCRF.getInputAlphabet().lookupObject(i).toString();
-			// log.info("featureName=" + featureName);
+			// log.debug("featureName=" + featureName);
 			int equalsIndex = featureName.indexOf("=");
-			// log.info("equalsIndex=" + equalsIndex);
+			// log.debug("equalsIndex=" + equalsIndex);
 			int atIndex = featureName.indexOf("@");
-			// log.info("atIndex=" + atIndex);
+			// log.debug("atIndex=" + atIndex);
 			int featureTypeEnd = featureName.length();
 			if (equalsIndex != -1 && equalsIndex < featureTypeEnd)
 				featureTypeEnd = equalsIndex;
 			if (atIndex != -1 && atIndex < featureTypeEnd)
 				featureTypeEnd = atIndex;
 			String featureType = featureName.substring(0, featureTypeEnd);
-			// log.info("featureType=" + featureType);
+			// log.debug("featureType=" + featureType);
 			String featureOffset = "0";
 			int featureDataEnd = featureName.length();
 			if (atIndex != -1) {
 				featureDataEnd = atIndex;
 				featureOffset = featureName.substring(atIndex + 1, featureName.length());
 			}
-			// log.info("featureOffset=" + featureOffset);
+			// log.debug("featureOffset=" + featureOffset);
 			String featureData = "";
 			if (featureDataEnd > featureTypeEnd)
 				featureData = featureName.substring(featureTypeEnd + 1, featureDataEnd);
-			// log.info("featureData=" + featureData);
+			// log.debug("featureData=" + featureData);
 			double max = Double.MIN_VALUE;
 			double min = Double.MAX_VALUE;
 			for (int j = 0; j < weights.length; j++) {
@@ -384,22 +384,22 @@ public class CRFTagger implements Tagger, Serializable {
 		} else if (textDirection == TextDirection.Reverse) {
 			sentence.addMentions(reversePositions, reverseTypes);
 		} else if (textDirection == TextDirection.Longer) {
-			// log.info();
-			// log.info(sentence.getText());
-			// log.info("Original mentions: " +
+			// log.debug();
+			// log.debug(sentence.getText());
+			// log.debug("Original mentions: " +
 			// sentence.getMentions());
-			// log.info(Arrays.toString(forwardPositions));
-			// log.info(Arrays.toString(forwardTypes));
-			// log.info(Arrays.toString(reversePositions));
-			// log.info(Arrays.toString(reverseTypes));
+			// log.debug(Arrays.toString(forwardPositions));
+			// log.debug(Arrays.toString(forwardTypes));
+			// log.debug(Arrays.toString(reversePositions));
+			// log.debug(Arrays.toString(reverseTypes));
 			Set<Mention> mentionSet = new HashSet<Mention>();
 			mentionSet.addAll(getMentions(sentence, forwardPositions, forwardTypes));
 			mentionSet.addAll(getMentions(sentence, reversePositions, reverseTypes));
-			// log.info("Mentions to resolve: " + mentionSet);
+			// log.debug("Mentions to resolve: " + mentionSet);
 			while (mentionSet.size() > 0) {
 				Mention current = mentionSet.iterator().next();
 				mentionSet.remove(current);
-				// log.info("Current mention is \"" +
+				// log.debug("Current mention is \"" +
 				// current.getText() + "\" " + current.getStart() + "-" +
 				// current.getEnd());
 				int start = current.getStart();
@@ -411,17 +411,17 @@ public class CRFTagger implements Tagger, Serializable {
 					Iterator<Mention> mentionIterator = mentionSet.iterator();
 					while (mentionIterator.hasNext()) {
 						Mention next = mentionIterator.next();
-						// log.info("Checking against \"" +
+						// log.debug("Checking against \"" +
 						// next.getText() + "\" " + next.getStart() + "-" +
 						// next.getEnd());
 						if (end > next.getStart() && start < next.getEnd()) {
-							// log.info("Overlaps with \"" +
+							// log.debug("Overlaps with \"" +
 							// next.getText() + "\" " + next.getStart() + "-" +
 							// next.getEnd());
 							mentionIterator.remove();
-							// log.info("longest: " +
+							// log.debug("longest: " +
 							// longest.length());
-							// log.info("next: " + next.length());
+							// log.debug("next: " + next.length());
 							if (next.length() > longest.length()) {
 								start = Math.min(start, next.getStart());
 								end = Math.max(end, next.getEnd());
@@ -431,21 +431,21 @@ public class CRFTagger implements Tagger, Serializable {
 						}
 					}
 				}
-				// log.info("Longest mention is \"" +
+				// log.debug("Longest mention is \"" +
 				// current.getText() + "\" " + current.getStart() + "-" +
 				// current.getEnd());
 				sentence.addMention(longest);
 			}
 			sentence.getTaggedTokens();
 		} else if (textDirection == TextDirection.Union) {
-			// log.info();
-			// log.info(sentence.getText());
-			// log.info("Original mentions: " +
+			// log.debug();
+			// log.debug(sentence.getText());
+			// log.debug("Original mentions: " +
 			// sentence.getMentions());
-			// log.info(Arrays.toString(forwardPositions));
-			// log.info(Arrays.toString(forwardTypes));
-			// log.info(Arrays.toString(reversePositions));
-			// log.info(Arrays.toString(reverseTypes));
+			// log.debug(Arrays.toString(forwardPositions));
+			// log.debug(Arrays.toString(forwardTypes));
+			// log.debug(Arrays.toString(reversePositions));
+			// log.debug(Arrays.toString(reverseTypes));
 			TagPosition[] unionPositions = new TagPosition[size];
 			MentionType[] unionTypes = new MentionType[size];
 			for (int i = 0; i < size; i++) {
@@ -462,8 +462,8 @@ public class CRFTagger implements Tagger, Serializable {
 				else
 					unionTypes[i] = reverseTypes[i];
 			}
-			// log.info(Arrays.toString(unionPositions));
-			// log.info(Arrays.toString(unionTypes));
+			// log.debug(Arrays.toString(unionPositions));
+			// log.debug(Arrays.toString(unionTypes));
 			sentence.addMentions(unionPositions, unionTypes);
 			sentence.getTaggedTokens();
 		}
@@ -529,7 +529,7 @@ public class CRFTagger implements Tagger, Serializable {
 				positions[i] = TagPosition.valueOf(split[0]);
 			}
 			catch (Exception e) {
-				log.info("Problem with Tag: " + tags.get(i));
+				log.debug("Problem with Tag: " + tags.get(i));
 				e.printStackTrace();
 			}
 			// TODO Verify that the type stays the same
@@ -539,7 +539,7 @@ public class CRFTagger implements Tagger, Serializable {
 		if (reverse) {
 			reverse(positions);
 			// Modify the tag positions to make sense if read from forward
-			// log.info("Before: " + Arrays.toString(positions));
+			// log.debug("Before: " + Arrays.toString(positions));
 			TagPosition[] positionsCopy = new TagPosition[positions.length];
 			System.arraycopy(positions, 0, positionsCopy, 0, positions.length);
 			for (int i = 0; i < positions.length; i++) {
@@ -550,7 +550,7 @@ public class CRFTagger implements Tagger, Serializable {
 				else
 					positions[i] = TagPosition.I;
 			}
-			// log.info(" After: " + Arrays.toString(positions));
+			// log.debug(" After: " + Arrays.toString(positions));
 			reverse(types);
 		}
 	}

@@ -66,7 +66,7 @@ public class SofaText extends BaseOpenmrsObject implements Serializable, Compara
 	 * @param concepts
 	 */
 	public void addMentionAndConcepts(Mention m, List<Concept> concepts) {
-		//log.info("Mention Text: " + m.getText());
+		//log.debug("Mention Text: " + m.getText());
 		ArrayList<SofaTextMention> toRemove = new ArrayList<SofaTextMention>();
 		
 		//check all SofaTextMentions
@@ -80,11 +80,11 @@ public class SofaText extends BaseOpenmrsObject implements Serializable, Compara
 			
 				if (stm.getMentionEnd() - stm.getMentionStart() < m.getEnd() - m.getStart())// mention is larger
 				{
-					log.info("1");
+					log.debug("1");
 					concepts.addAll(stm.getConcepts());
 					toRemove.add(stm);
 				} else {
-					log.info("2");
+					log.debug("2");
 					stm.addConcepts(concepts);
 					return;
 				}
@@ -256,7 +256,7 @@ public class SofaText extends BaseOpenmrsObject implements Serializable, Compara
 		String tagged;
 		for (SofaTextMention m : sofaTextMention) {
 			tagged = wrapInMentionTypeTag(m.getMentionText(), m.getMentionType());
-			//log.info(tagged);
+			//log.debug(tagged);
 			
 			if (!m.getSofaTextMentionConcept().isEmpty())
 				tagged = wrapInConceptTag(tagged, m);

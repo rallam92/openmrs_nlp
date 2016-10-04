@@ -32,7 +32,7 @@ public class NERTagger implements Serializable {
 	ArrayList<NamedEntity> namedEntities;
 	
 	public NERTagger() {
-		log.info("getting Tagger");
+		log.debug("getting Tagger");
 		tagger = TaggerFactory.getTagger();
 		
 		taggerName = TaggerFactory.getTaggerName();
@@ -53,7 +53,7 @@ public class NERTagger implements Serializable {
 	public ArrayList<NamedEntity> tag(String sofa) {
 		// if the global configuration has changed since tagger was initialized
 		if (TaggerFactory.isNewtaggerRequired(taggerName)) {
-			log.info("New Tagger Required");
+			log.debug("New Tagger Required");
 			tagger = TaggerFactory.getTagger();
 			taggerName = TaggerFactory.getTaggerName();
 		}
@@ -67,7 +67,7 @@ public class NERTagger implements Serializable {
 		tokenizer.tokenize(sentence);
 		
 		//perform CRF tagging
-		log.info("Tagging Sentence with BANNER");
+		log.debug("Tagging Sentence with BANNER");
 		tagger.tag(sentence);
 		
 		mentions.addAll(sentence.getMentions());
